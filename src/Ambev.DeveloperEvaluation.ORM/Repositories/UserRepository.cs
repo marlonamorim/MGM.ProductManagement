@@ -1,5 +1,7 @@
 ﻿using Ambev.DeveloperEvaluation.Domain.Entities;
+using Ambev.DeveloperEvaluation.Domain.Enums;
 using Ambev.DeveloperEvaluation.Domain.Repositories;
+using Ambev.DeveloperEvaluation.ORM.Queries;
 using Microsoft.EntityFrameworkCore;
 
 namespace Ambev.DeveloperEvaluation.ORM.Repositories;
@@ -41,7 +43,7 @@ public class UserRepository : IUserRepository
     /// <returns>The user if found, null otherwise</returns>
     public async Task<User?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        return await _context.Users.FirstOrDefaultAsync(o=> o.Id == id, cancellationToken);
+        return await _context.Users.FirstOrDefaultAsync(o => o.Id == id, cancellationToken);
     }
 
     /// <summary>
@@ -71,5 +73,25 @@ public class UserRepository : IUserRepository
         _context.Users.Remove(user);
         await _context.SaveChangesAsync(cancellationToken);
         return true;
+    }
+
+    /// <summary>
+    /// Retrieves a collection users by page, size with possibility of ordering
+    /// </summary>
+    /// <param name="page"></param>
+    /// <param name="size"></param>
+    /// <param name="order"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns>The users if found</returns>
+    public async Task<IEnumerable<User>> ListPaginatedAsync(int page, int size, IEnumerable<UserOrdering> ordering, CancellationToken cancellationToken = default)
+    {
+        page = page == 0 ? 1 : page;
+
+        var query = _context.Users
+            .Skip((page - 1) * size)
+            .Take(size);
+        query = query.OrderByUserOrdering(ordering);
+
+        return await query.ToListAsync(cancellationToken);
     }
 }
