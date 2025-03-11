@@ -36,6 +36,23 @@ public class UserRepository : IUserRepository
     }
 
     /// <summary>
+    /// Update a user in the database
+    /// </summary>
+    /// <param name="user">The user to update</param>
+    /// <param name="cancellationToken">Cancellation token</param>
+    /// <returns>Assertion if user updated</returns>
+    public async Task<bool> UpdateAsync(Guid id, User user, CancellationToken cancellationToken = default)
+    {
+        var userToUpdate = await GetByIdAsync(id, cancellationToken);
+        if (userToUpdate is null)
+            return false;
+
+        userToUpdate.Update(user.Username, user.Email, user.Phone, user.Password);
+        await _context.SaveChangesAsync(cancellationToken);
+        return true;
+    }
+
+    /// <summary>
     /// Retrieves a user by their unique identifier
     /// </summary>
     /// <param name="id">The unique identifier of the user</param>
