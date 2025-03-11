@@ -17,6 +17,15 @@ public interface IUserRepository
     Task<User> CreateAsync(User user, CancellationToken cancellationToken = default);
 
     /// <summary>
+    /// Update a user in the repository
+    /// </summary>
+    /// <param name="id"></param>
+    /// <param name="user"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns>Assertion if user updated</returns>
+    Task<bool> UpdateAsync(Guid id, User user, CancellationToken cancellationToken = default);
+
+    /// <summary>
     /// Retrieves a collection users by page, size with the possibility of ordering
     /// </summary>
     /// <param name="page"></param>
