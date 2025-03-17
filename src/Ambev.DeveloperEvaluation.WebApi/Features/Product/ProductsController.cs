@@ -1,7 +1,10 @@
 ﻿using Ambev.DeveloperEvaluation.Application.Products.CreateProduct;
+using Ambev.DeveloperEvaluation.Application.Products.GetProduct;
 using Ambev.DeveloperEvaluation.Application.Products.UpdateProduct;
+using Ambev.DeveloperEvaluation.Domain.Enums;
 using Ambev.DeveloperEvaluation.WebApi.Common;
 using Ambev.DeveloperEvaluation.WebApi.Features.Product.CreateProduct;
+using Ambev.DeveloperEvaluation.WebApi.Features.Product.GetProduct;
 using Ambev.DeveloperEvaluation.WebApi.Features.Product.UpdateProduct;
 using AutoMapper;
 using MediatR;
@@ -84,6 +87,66 @@ namespace Ambev.DeveloperEvaluation.WebApi.Features.Product
                 Success = true,
                 Message = "Product updated successfully",
                 Data = _mapper.Map<UpdateProductResponse>(response)
+            });
+        }
+
+        /// <summary>
+        /// Retrieves a Product by their ID
+        /// </summary>
+        /// <param name="id">The unique identifier of the Product</param>
+        /// <param name="cancellationToken">Cancellation token</param>
+        /// <returns>The Product details if found</returns>
+        [HttpGet("{id}")]
+        [ProducesResponseType(typeof(ApiResponseWithData<GetProductResponse>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetProduct([FromRoute] Guid id, CancellationToken cancellationToken)
+        {
+            var request = new GetProductRequest { Id = id };
+            var validator = new GetProductRequestValidator();
+            var validationResult = await validator.ValidateAsync(request, cancellationToken);
+
+            if (!validationResult.IsValid)
+                return BadRequest(validationResult.Errors);
+
+            var command = _mapper.Map<GetProductCommand>(request.Id);
+            var response = await _mediator.Send(command, cancellationToken);
+
+            return Ok(new ApiResponseWithData<GetProductResponse>
+            {
+                Success = true,
+                Message = "Product retrieved successfully",
+                Data = _mapper.Map<GetProductResponse>(response)
+            });
+        }
+
+        /// <summary>
+        /// Retrieves a Product by their Category
+        /// </summary>
+        /// <param name="category">The category of the Product</param>
+        /// <param name="cancellationToken">Cancellation token</param>
+        /// <returns>The Product details if found</returns>
+        [HttpGet("category/{category}")]
+        [ProducesResponseType(typeof(ApiResponseWithData<GetProductResponse>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetProductByCategory([FromRoute] ProductCategory category, CancellationToken cancellationToken)
+        {
+            var request = new GetProductRequest { Category = category };
+            var validator = new GetProductRequestValidator();
+            var validationResult = await validator.ValidateAsync(request, cancellationToken);
+
+            if (!validationResult.IsValid)
+                return BadRequest(validationResult.Errors);
+
+            var command = _mapper.Map<GetProductCommand>(request.Category);
+            var response = await _mediator.Send(command, cancellationToken);
+
+            return Ok(new ApiResponseWithData<GetProductResponse>
+            {
+                Success = true,
+                Message = "Product retrieved successfully",
+                Data = _mapper.Map<GetProductResponse>(response)
             });
         }
     }
