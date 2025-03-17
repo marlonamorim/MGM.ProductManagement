@@ -1,4 +1,5 @@
 ﻿using Ambev.DeveloperEvaluation.Domain.Entities;
+using Ambev.DeveloperEvaluation.Domain.Enums;
 
 namespace Ambev.DeveloperEvaluation.Domain.Repositories
 {
@@ -31,5 +32,13 @@ namespace Ambev.DeveloperEvaluation.Domain.Repositories
         /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>The product if found, null otherwise</returns>
         Task<Product?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// Retrieves a product by their unique identifier
+        /// </summary>
+        /// <param name="category">The category of the product</param>
+        /// <param name="cancellationToken">Cancellation token</param>
+        /// <returns>The product if found, null otherwise</returns>
+        Task<Product?> GetByCategoryAsync(ProductCategory category, CancellationToken cancellationToken = default);
     }
 }

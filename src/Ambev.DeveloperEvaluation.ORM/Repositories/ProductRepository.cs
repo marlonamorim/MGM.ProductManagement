@@ -1,4 +1,5 @@
 ﻿using Ambev.DeveloperEvaluation.Domain.Entities;
+using Ambev.DeveloperEvaluation.Domain.Enums;
 using Ambev.DeveloperEvaluation.Domain.Repositories;
 using Microsoft.EntityFrameworkCore;
 
@@ -59,6 +60,17 @@ namespace Ambev.DeveloperEvaluation.ORM.Repositories
         public async Task<Product?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
         {
             return await _context.Products.FirstOrDefaultAsync(o => o.Id == id, cancellationToken);
+        }
+
+        /// <summary>
+        /// Retrieves a Product by their category
+        /// </summary>
+        /// <param name="category">The category of the Product</param>
+        /// <param name="cancellationToken">Cancellation token</param>
+        /// <returns>The Product if found, null otherwise</returns>
+        public async Task<Product?> GetByCategoryAsync(ProductCategory category, CancellationToken cancellationToken = default)
+        {
+            return await _context.Products.FirstOrDefaultAsync(o => o.Category == category, cancellationToken);
         }
     }
 }
