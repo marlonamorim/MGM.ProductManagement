@@ -9,6 +9,7 @@ using Ambev.DeveloperEvaluation.WebApi.Features.Product.UpdateProduct;
 using AutoMapper;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using System;
 
 namespace Ambev.DeveloperEvaluation.WebApi.Features.Product
 {
@@ -147,6 +148,25 @@ namespace Ambev.DeveloperEvaluation.WebApi.Features.Product
                 Success = true,
                 Message = "Product retrieved successfully",
                 Data = _mapper.Map<GetProductResponse>(response)
+            });
+        }
+
+        /// <summary>
+        /// Retrieves all product categories
+        /// </summary>
+        /// <param name="cancellationToken">Cancellation token</param>
+        /// <returns>The Product details if found</returns>
+        [HttpGet("categories")]
+        [ProducesResponseType(typeof(ApiResponseWithData<GetProductResponse>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status404NotFound)]
+        public IActionResult GetCategories()
+        {
+            return Ok(new ApiResponseWithData<IEnumerable<ProductCategory>>
+            {
+                Success = true,
+                Message = "Product categories retrieved successfully",
+                Data = Enum.GetValues(typeof(ProductCategory)).Cast<ProductCategory>()
             });
         }
     }
