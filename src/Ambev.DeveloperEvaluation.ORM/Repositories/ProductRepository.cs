@@ -1,6 +1,7 @@
 ﻿using Ambev.DeveloperEvaluation.Domain.Entities;
 using Ambev.DeveloperEvaluation.Domain.Enums;
 using Ambev.DeveloperEvaluation.Domain.Repositories;
+using Ambev.DeveloperEvaluation.ORM.Queries;
 using Microsoft.EntityFrameworkCore;
 
 namespace Ambev.DeveloperEvaluation.ORM.Repositories
@@ -47,6 +48,22 @@ namespace Ambev.DeveloperEvaluation.ORM.Repositories
         public async Task<Product?> GetByCategoryAsync(ProductCategory category, CancellationToken cancellationToken = default)
         {
             return await _context.Products.FirstOrDefaultAsync(o => o.Category == category, cancellationToken);
+        }
+
+        /// <summary>
+        /// Retrieves a collection product by page, size with possibility of ordering
+        /// </summary>
+        /// <param name="page"></param>
+        /// <param name="size"></param>
+        /// <param name="ordering"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns>The products if found</returns>
+        public async Task<IEnumerable<Product>> ListPaginatedWithOrderingAsync(int page, int size, IEnumerable<ProductOrdering> ordering, CancellationToken cancellationToken = default)
+        {
+            var query = PageAsync(page, size);
+            query = query.OrderByProductOrdering(ordering);
+
+            return await query.ToListAsync(cancellationToken);
         }
     }
 }

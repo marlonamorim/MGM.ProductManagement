@@ -96,9 +96,7 @@ public class UsersController : BaseController
     /// <summary>
     /// Retrieves a collection user by page, size with possibility of ordering
     /// </summary>
-    /// <param name="page"></param>
-    /// <param name="size"></param>
-    /// <param name="order"></param>
+    /// <param name="request"></param>
     /// <param name="cancellationToken">Cancellation token</param>
     /// <returns>The user details if found</returns>
     [HttpGet]

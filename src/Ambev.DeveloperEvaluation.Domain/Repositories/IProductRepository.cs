@@ -24,5 +24,15 @@ namespace Ambev.DeveloperEvaluation.Domain.Repositories
         /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>The product if found, null otherwise</returns>
         Task<Product?> GetByCategoryAsync(ProductCategory category, CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// Retrieves a collection products by page, size with the possibility of ordering
+        /// </summary>
+        /// <param name="page"></param>
+        /// <param name="size"></param>
+        /// <param name="ordering"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns>Collection products paginated and ordering</returns>
+        Task<IEnumerable<Product>> ListPaginatedWithOrderingAsync(int page, int size, IEnumerable<ProductOrdering> ordering, CancellationToken cancellationToken = default);
     }
 }

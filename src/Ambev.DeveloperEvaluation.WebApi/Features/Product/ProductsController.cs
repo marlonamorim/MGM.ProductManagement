@@ -1,15 +1,16 @@
 ﻿using Ambev.DeveloperEvaluation.Application.Products.CreateProduct;
 using Ambev.DeveloperEvaluation.Application.Products.GetProduct;
+using Ambev.DeveloperEvaluation.Application.Products.ListProducts;
 using Ambev.DeveloperEvaluation.Application.Products.UpdateProduct;
 using Ambev.DeveloperEvaluation.Domain.Enums;
 using Ambev.DeveloperEvaluation.WebApi.Common;
 using Ambev.DeveloperEvaluation.WebApi.Features.Product.CreateProduct;
 using Ambev.DeveloperEvaluation.WebApi.Features.Product.GetProduct;
+using Ambev.DeveloperEvaluation.WebApi.Features.Product.ListProduct;
 using Ambev.DeveloperEvaluation.WebApi.Features.Product.UpdateProduct;
 using AutoMapper;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using System;
 
 namespace Ambev.DeveloperEvaluation.WebApi.Features.Product
 {
@@ -89,6 +90,28 @@ namespace Ambev.DeveloperEvaluation.WebApi.Features.Product
                 Message = "Product updated successfully",
                 Data = _mapper.Map<UpdateProductResponse>(response)
             });
+        }
+
+        /// <summary>
+        /// Retrieves a collection Product by page, size with possibility of ordering
+        /// </summary>
+        /// <param name="request"></param>
+        /// <param name="cancellationToken">Cancellation token</param>
+        /// <returns>The Product details if found</returns>
+        [HttpGet]
+        [ProducesResponseType(typeof(ApiResponseWithData<ListProductsResponse>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> ListProducts([FromQuery] ListProductsRequest request, CancellationToken cancellationToken)
+        {
+            var command = _mapper.Map<ListProductsCommand>(request);
+            var response = await _mediator.Send(command, cancellationToken);
+
+            return OkPaginated(new PaginatedList<GetProductResponse>(
+                _mapper.Map<List<GetProductResponse>>(response.Products.ToList()),
+                response.TotalItems,
+                request.Page,
+                request.Size));
         }
 
         /// <summary>

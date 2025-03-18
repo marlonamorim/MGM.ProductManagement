@@ -22,9 +22,9 @@ public interface IUserRepository : IMainRepository<User>
     /// </summary>
     /// <param name="page"></param>
     /// <param name="size"></param>
-    /// <param name="order"></param>
+    /// <param name="ordering"></param>
     /// <param name="cancellationToken"></param>
-    /// <returns></returns>
+    /// <returns>Collection users paginated and ordering</returns>
     Task<IEnumerable<User>> ListPaginatedWithOrderingAsync(int page, int size, IEnumerable<UserOrdering> ordering, CancellationToken cancellationToken = default);
 
     /// <summary>
