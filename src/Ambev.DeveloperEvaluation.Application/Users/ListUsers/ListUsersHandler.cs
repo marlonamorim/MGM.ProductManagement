@@ -20,7 +20,7 @@ namespace Ambev.DeveloperEvaluation.Application.Users.ListUsers
         /// <exception cref="NotImplementedException"></exception>
         public async Task<ListUsersResult> Handle(ListUsersCommand request, CancellationToken cancellationToken)
         {
-            var users = await userRepository.ListPaginatedAsync(request.Page, request.Size, request.Ordering, cancellationToken);
+            var users = await userRepository.ListPaginatedWithOrderingAsync(request.Page, request.Size, request.Ordering, cancellationToken);
             
             return mapper.Map<ListUsersResult>(users);
         }
